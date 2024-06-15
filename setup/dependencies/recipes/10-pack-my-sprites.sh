@@ -21,7 +21,7 @@ bim-git-clone-repository \
 
 bim-cmake-build \
     --build-dir "$build_dir" \
-    --build-type "$build_type" \
+    --build-type "${build_type^}" \
     --install-dir "$install_dir" \
     --source-dir "$source_dir" \
     --cmake -DPMS_BUILD_MAN_PAGES=OFF

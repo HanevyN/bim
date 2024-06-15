@@ -64,7 +64,7 @@ build()
           "${cmake_args[@]}" \
           "$@"
 
-    cmake --build . --target install --parallel
+    cmake --build . --target install --parallel --verbose
 }
 
 build_android_arch()

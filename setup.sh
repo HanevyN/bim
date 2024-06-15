@@ -201,6 +201,22 @@ install_dependencies()
     export bim_packages_root="$backroom"/packages
     export bim_target_platform="$target_platform"
 
+    if [[ "$bim_build_type" = "release" ]]
+    then
+        # We don't use CMAKE_INTERPROCEDURAL_OPTIMIZATION for the
+        # dependencies because it forces the thin LTO objects. This
+        # prevents the libraries built this way to be linked in an
+        # application compiled without LTO.
+        #
+        # See https://gitlab.kitware.com/cmake/cmake/-/issues/23136
+        #
+        # This is a problem because we mix release dependencies and
+        # debug binaries.
+        export CFLAGS="${CFLAGS:-} -flto"
+        export CXXFLAGS="${CXXFLAGS:-} -flto"
+        export LDFLAGS="${LDFLAGS:-} -flto"
+    fi
+
     grep --invert-match "^#" "$4" \
         | while read -r script
     do
@@ -261,7 +277,8 @@ configure()
             cmake_options=(-DCMAKE_BUILD_TYPE=Debug)
             ;;
         release)
-            cmake_options=(-DCMAKE_BUILD_TYPE=Release)
+            cmake_options=(-DCMAKE_BUILD_TYPE=Release
+                           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON)
             ;;
         tsan)
             cmake_options=(-DCMAKE_BUILD_TYPE=RelWithDebInfo
