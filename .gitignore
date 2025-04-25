@@ -3,3 +3,4 @@
 /build/
 /android/app/keystore.properties
 /android/app/release.keystore
+.idea/
